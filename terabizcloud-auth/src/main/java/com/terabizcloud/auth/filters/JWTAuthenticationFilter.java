@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.auth0.jwt.JWT;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terabizcloud.auth.SecurityConstants;
+import com.terabizcloud.auth.security.SecurityConstants;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 

@@ -1,4 +1,4 @@
-package com.terabizcloud.auth;
+package com.terabizcloud.auth.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

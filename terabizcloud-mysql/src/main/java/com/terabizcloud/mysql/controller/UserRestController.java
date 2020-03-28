@@ -1,6 +1,7 @@
 package com.terabizcloud.mysql.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.terabizcloud.mysql.dto.UserDTO;
 import com.terabizcloud.mysql.model.User;
+import com.terabizcloud.mysql.model.UserExample;
+import com.terabizcloud.mysql.model.UserExample.Criteria;
 import com.terabizcloud.mysql.repository.UserMapper;
 import com.terabizcloud.mysql.util.TerabizResponse;
 
@@ -27,7 +30,7 @@ public class UserRestController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
-	@PostMapping("/mysql/registeruser")
+	@PostMapping("/registeruser")
 	public ResponseEntity<TerabizResponse> insertData(@RequestBody UserDTO userDTO) {
 		
 		User userModel = new User();
@@ -46,7 +49,7 @@ public class UserRestController {
 		}
 	}
 	
-	@GetMapping("/mysql/getuser")
+	@GetMapping("/getuser")
 	public ResponseEntity<TerabizResponse> getData(@RequestParam("id") Integer id) {
 		
 		User userModel = userMapper.selectByPrimaryKey(id);
@@ -55,6 +58,49 @@ public class UserRestController {
 		
 		if(null != userModel ) {
 			response.put("response", userModel);
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), true,
+					"Data fetched Successfully", response));	
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), false,
+					"No data found", null));
+		}
+	}
+	
+	@GetMapping("/getbyusername")
+	public ResponseEntity<TerabizResponse> getData(@RequestParam("username") String username) {
+		UserExample userExample = new UserExample();
+		Criteria criteria = userExample.createCriteria();
+		criteria.andUsernameEqualTo(username);
+		List<User> users = userMapper.selectByExample(userExample);
+
+		Map<String, Object> response = new HashMap<String, Object>();
+		
+		if(null != users && users.size() > 0 ) {
+			User user = users.get(0);
+			UserDTO userDto = new UserDTO();
+			userDto.setUsername(user.getUsername());
+			userDto.setPassword(user.getPassword());
+			
+			response.put("response", userDto);
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), true,
+					"Data fetched Successfully", response));	
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), false,
+					"No data found", null));
+		}
+	}
+	
+	@GetMapping("/getusers")
+	public ResponseEntity<TerabizResponse> getAllData() {
+		
+		List<User> users = userMapper.selectByExample(null);
+
+		Map<String, Object> response = new HashMap<String, Object>();
+		
+		if(null != users ) {
+			response.put("response", users);
 			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), true,
 					"Data fetched Successfully", response));	
 		}

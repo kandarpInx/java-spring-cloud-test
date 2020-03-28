@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.terabizcloud.auth.SecurityConstants;
+import com.terabizcloud.auth.security.SecurityConstants;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
