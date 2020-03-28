@@ -2,9 +2,11 @@ package com.terabizcloud.mysql.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,7 +27,9 @@ import com.terabizcloud.mysql.util.TerabizResponse;
 
 @RestController
 public class UserRestController {
-
+	@Autowired
+	private MessageSource messageSource;
+	
 	@Autowired
 	private RabbitMQSender rabbitMQSender;
 	
@@ -35,13 +39,11 @@ public class UserRestController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
-	@PostMapping("/registeruser")
-	public ResponseEntity<TerabizResponse> insertData(@RequestBody UserDTO userDTO) {
-		
+	@PostMapping("/register")
+	public ResponseEntity<TerabizResponse> registerUser(@RequestBody UserDTO userDTO) {
 		User userModel = new User();
 		userModel.setUsername(userDTO.getUsername());
 		userModel.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-		
 		
 		int response = userMapper.insert(userModel);
 		if(response == 1) {
@@ -55,34 +57,32 @@ public class UserRestController {
 			rabbitMQSender.send(msg);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), true,
-					"Data inserted Successfully", null));
+					messageSource.getMessage("user.register.success", null, Locale.US), null));
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), false,
-					"Error while inserting data", null));
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), false,
+					messageSource.getMessage("user.register.error", null, Locale.US), null));
 		}
 	}
 	
-	@GetMapping("/getuser")
-	public ResponseEntity<TerabizResponse> getData(@RequestParam("id") Integer id) {
-		
+	@GetMapping("/user")
+	public ResponseEntity<TerabizResponse> getUserById(@RequestParam("id") Integer id) {
 		User userModel = userMapper.selectByPrimaryKey(id);
-
-		Map<String, Object> response = new HashMap<String, Object>();
 		
 		if(null != userModel ) {
+			Map<String, Object> response = new HashMap<String, Object>();
 			response.put("response", userModel);
-			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), true,
-					"Data fetched Successfully", response));	
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.FOUND.value(), true,
+					messageSource.getMessage("user.found", null, Locale.US), response));	
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), false,
-					"No data found", null));
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.NOT_FOUND.value(), false,
+					messageSource.getMessage("user.not.found", null, Locale.US), null));
 		}
 	}
 	
-	@GetMapping("/getbyusername")
-	public ResponseEntity<TerabizResponse> getData(@RequestParam("username") String username) {
+	@GetMapping("/user-by-username")
+	public ResponseEntity<TerabizResponse> getUserByUsername(@RequestParam("username") String username) {
 		UserExample userExample = new UserExample();
 		Criteria criteria = userExample.createCriteria();
 		criteria.andUsernameEqualTo(username);
@@ -97,17 +97,17 @@ public class UserRestController {
 			userDto.setPassword(user.getPassword());
 			
 			response.put("response", userDto);
-			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), true,
-					"Data fetched Successfully", response));	
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.FOUND.value(), true,
+					messageSource.getMessage("user.found", null, Locale.US), response));	
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), false,
-					"No data found", null));
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.NOT_FOUND.value(), false,
+					messageSource.getMessage("user.not.found", null, Locale.US), null));
 		}
 	}
 	
-	@GetMapping("/getusers")
-	public ResponseEntity<TerabizResponse> getAllData() {
+	@GetMapping("/users")
+	public ResponseEntity<TerabizResponse> getAllUsers() {
 		
 		List<User> users = userMapper.selectByExample(null);
 
@@ -115,12 +115,12 @@ public class UserRestController {
 		
 		if(null != users ) {
 			response.put("response", users);
-			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), true,
-					"Data fetched Successfully", response));	
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.FOUND.value(), true,
+					messageSource.getMessage("users.found", null, Locale.US), response));	
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), false,
-					"No data found", null));
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.NOT_FOUND.value(), false,
+					messageSource.getMessage("no.user.found", null, Locale.US), null));
 		}
 	}
 	
