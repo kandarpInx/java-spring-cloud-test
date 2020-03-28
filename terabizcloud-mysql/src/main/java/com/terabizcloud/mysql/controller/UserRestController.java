@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonObject;
+import com.terabizcloud.mysql.dto.Notification;
 import com.terabizcloud.mysql.dto.UserDTO;
 import com.terabizcloud.mysql.model.User;
 import com.terabizcloud.mysql.model.UserExample;
@@ -24,6 +26,9 @@ import com.terabizcloud.mysql.util.TerabizResponse;
 @RestController
 public class UserRestController {
 
+	@Autowired
+	private RabbitMQSender rabbitMQSender;
+	
 	@Autowired
 	private UserMapper userMapper;
 	
@@ -40,6 +45,15 @@ public class UserRestController {
 		
 		int response = userMapper.insert(userModel);
 		if(response == 1) {
+			Notification notification = new Notification();
+			notification.setMsg(userModel.getUsername());
+			notification.setNotificationType("Register");
+			JsonObject msg = new JsonObject();
+			msg.addProperty("msg", userModel.getUsername());
+			msg.addProperty("notificationType","Register");
+			
+			rabbitMQSender.send(msg);
+			
 			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), true,
 					"Data inserted Successfully", null));
 		}
