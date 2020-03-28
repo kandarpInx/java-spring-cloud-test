@@ -18,13 +18,13 @@ public class EmployeeController {
 	private EmployeeService employeeService;
 	 
 	//Save Employee
-	@RequestMapping(value = "/mongo/save",method = RequestMethod.POST)
+	@RequestMapping(value = "/save",method = RequestMethod.POST)
 	public Employee save(Employee user){
 	    return employeeService.save(user);
 	}
 	 
 	// list of all Employee
-    @RequestMapping(value = "/mongo/list",method = RequestMethod.GET)
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
     public List<Employee> listEmployee() {
         return employeeService.findAll();
     }
