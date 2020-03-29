@@ -5,8 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.terabizcloud.mysql.dto.Notification;
 
 @Service
 public class RabbitMQSender {
@@ -21,11 +20,8 @@ public class RabbitMQSender {
 	private String routingkey;	
 	String kafkaTopic = "java_in_use_topic";
 	
-	public void send(JsonObject msg) {
-		Gson gson = new Gson();
-		String json = gson.toJson(msg); 
-		amqpTemplate.convertAndSend(exchange, routingkey, json);
-		System.out.println("Send msg = " + msg);
-	    
+	public void send(Notification notification) {
+		amqpTemplate.convertAndSend(exchange, routingkey, notification);
+		System.out.println("Send msg = " + notification);
 	}
 }

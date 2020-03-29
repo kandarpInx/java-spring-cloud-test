@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.JsonObject;
 import com.terabizcloud.mysql.dto.Notification;
 import com.terabizcloud.mysql.dto.UserDTO;
 import com.terabizcloud.mysql.model.User;
@@ -50,11 +49,7 @@ public class UserRestController {
 			Notification notification = new Notification();
 			notification.setMsg(userModel.getUsername());
 			notification.setNotificationType("Register");
-			JsonObject msg = new JsonObject();
-			msg.addProperty("msg", userModel.getUsername());
-			msg.addProperty("notificationType","Register");
-			
-			rabbitMQSender.send(msg);
+			rabbitMQSender.send(notification);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.OK.value(), true,
 					messageSource.getMessage("user.register.success", null, Locale.US), null));
