@@ -40,6 +40,11 @@ public class UserRestController {
 	
 	@PostMapping("/register")
 	public ResponseEntity<TerabizResponse> registerUser(@RequestBody UserDTO userDTO) {
+		if(null != getUserByUserName(userDTO.getUsername())) {
+			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.FOUND.value(), false,
+					messageSource.getMessage("user.already.registered.with.username.x", new String[] { userDTO.getUsername() }, Locale.US), null));
+		}
+		
 		User userModel = new User();
 		userModel.setUsername(userDTO.getUsername());
 		userModel.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
@@ -78,20 +83,16 @@ public class UserRestController {
 	
 	@GetMapping("/user-by-username")
 	public ResponseEntity<TerabizResponse> getUserByUsername(@RequestParam("username") String username) {
-		UserExample userExample = new UserExample();
-		Criteria criteria = userExample.createCriteria();
-		criteria.andUsernameEqualTo(username);
-		List<User> users = userMapper.selectByExample(userExample);
-
-		Map<String, Object> response = new HashMap<String, Object>();
+		User user = getUserByUserName(username);
 		
-		if(null != users && users.size() > 0 ) {
-			User user = users.get(0);
+		if(null != user) {
 			UserDTO userDto = new UserDTO();
 			userDto.setUsername(user.getUsername());
 			userDto.setPassword(user.getPassword());
 			
+			Map<String, Object> response = new HashMap<String, Object>();
 			response.put("response", userDto);
+			
 			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.FOUND.value(), true,
 					messageSource.getMessage("user.found", null, Locale.US), response));	
 		}
@@ -99,6 +100,20 @@ public class UserRestController {
 			return ResponseEntity.status(HttpStatus.OK).body(new TerabizResponse(HttpStatus.NOT_FOUND.value(), false,
 					messageSource.getMessage("user.not.found", null, Locale.US), null));
 		}
+	}
+	
+	private User getUserByUserName(String username) {
+		UserExample userExample = new UserExample();
+		Criteria criteria = userExample.createCriteria();
+		criteria.andUsernameEqualTo(username);
+		List<User> users = userMapper.selectByExample(userExample);
+		
+		User user = null;
+		if(null != users && users.size() > 0 ) {
+			user = users.get(0);
+		}
+		
+		return user;
 	}
 	
 	@GetMapping("/users")
