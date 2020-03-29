@@ -4,6 +4,8 @@ import java.util.Collections;
 
 import javax.naming.ServiceUnavailableException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +17,8 @@ import com.terabizcloud.auth.util.CustomDiscoveryClientUtil;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+	private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+	
 	@Autowired
 	private CustomDiscoveryClientUtil customDiscoveryClientUtil;
 	
@@ -24,10 +28,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		try {
 			user = customDiscoveryClientUtil.loadUserByUsername(username);
 		} catch (ServiceUnavailableException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		
 		if(null == user) {
+			logger.info("user not found with username: "+username);
 			throw new UsernameNotFoundException(username);
 		}
 		
