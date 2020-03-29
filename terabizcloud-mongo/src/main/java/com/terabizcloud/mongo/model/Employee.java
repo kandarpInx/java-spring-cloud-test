@@ -10,6 +10,13 @@ public class Employee {
 	private String firstName;
 	private String lastName;
 	
+	public Employee() {}
+
+	public Employee(String firstName, String lastName) {
+	    this.firstName = firstName;
+	    this.lastName = lastName;
+	}
+	  
 	public String getEmpId() {
 		return empId;
 	}
@@ -27,5 +34,10 @@ public class Employee {
 	}
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("Customer[id=%s, firstName='%s', lastName='%s']", empId, firstName, lastName);
 	}
 }
