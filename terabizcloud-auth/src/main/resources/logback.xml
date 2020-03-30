@@ -9,7 +9,7 @@
     </appender>
     
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>/media/inexture/BhavikaData/Projects/Madhu_JavaProject/logs/terabizcloud-auth.log</file>
+        <file>terabizcloud-auth.log</file>
         <append>true</append>
         <encoder>
             <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
@@ -20,7 +20,7 @@
     	<appender-ref ref="FILE" /> 
     </logger>
  
-<!--     <root level="debug"> -->
-<!--         <appender-ref ref="STDOUT" /> -->
-<!--     </root> -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
 </configuration>
