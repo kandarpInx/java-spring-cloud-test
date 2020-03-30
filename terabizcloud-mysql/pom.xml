@@ -119,7 +119,7 @@
 						<phase>generate-sources</phase>
 					</execution>
 				</executions>
-				<!--Must be added here oracle Driving package-->
+
 				<dependencies>
 					<dependency>
 						<groupId>mysql</groupId>

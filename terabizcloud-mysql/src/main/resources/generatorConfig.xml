@@ -6,16 +6,18 @@
 <generatorConfiguration>
   <!-- <classPathEntry location="/Program Files/IBM/SQLLIB/java/db2java.zip" /> -->
 
+  <properties resource="bootstrap.properties"></properties>
+  
   <context id="DB2Tables" targetRuntime="MyBatis3">
   
   	<plugin type = "org.mybatis.generator.plugins.MapperAnnotationPlugin">
 		<property name="@mapper" value="true" />
 	</plugin>
 	
-    <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-        connectionURL="jdbc:mysql://localhost:3306/testdb"
-        userId="root"
-        password="root">
+    <jdbcConnection driverClass="${driverClassName}"
+        connectionURL="${url}"
+        userId="${username}"
+        password="${password}">
     </jdbcConnection>
 
     <javaTypeResolver >
