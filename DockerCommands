@@ -1,0 +1,22 @@
+cd terabizcloud-config
+mvn -e clean package
+docker build -t terabizcloud-config:config .
+
+start local consul: ./consul agent --dev
+cd terabizcloud-auth
+mvn -e clean package
+docker build -t terabizcloud-auth:auth .
+
+cd terabizcloud-mysql
+mvn -e clean package -DskipTests
+docker build -t terabizcloud-mysql:mysql .
+
+cd terabizcloud-mongo
+mvn -e clean package
+docker build -t terabizcloud-mongo:mongo .
+
+stop consul and create following volume folder and update path in docker-compose.yml
+docker-commpose up
+
+
+

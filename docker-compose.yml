@@ -30,7 +30,7 @@ services:
       - /mysql_data:/var/lib/mysql
   mongo:
     image: mongo
-    container_name: mysqldb
+    container_name: mongodb
     ports:
       - 27018:27017
     environment:
@@ -50,7 +50,7 @@ services:
       - CONSUL_HOST=consul
       - CONSUL_PORT=8500
       - CONFIG_SERVER_HOST=terabizcloud-config
-      - CONFIG_SERVER_PORT=8500
+      - CONFIG_SERVER_PORT=8080
     ports:
       - 8081:8081
     depends_on:
@@ -63,11 +63,13 @@ services:
       - CONSUL_HOST=consul
       - CONSUL_PORT=8500
       - CONFIG_SERVER_HOST=terabizcloud-config
-      - CONFIG_SERVER_PORT=8500
+      - CONFIG_SERVER_PORT=8080
       - MYSQL_HOST=mysql-57
-      - MYSQL_PORT=3307
+      - MYSQL_PORT=3306
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=root
       - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=6672
+      - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=admin
       - RABBITMQ_PASSWORD=admin
     ports:
@@ -85,11 +87,13 @@ services:
       - CONSUL_HOST=consul
       - CONSUL_PORT=8500
       - CONFIG_SERVER_HOST=terabizcloud-config
-      - CONFIG_SERVER_PORT=8500
+      - CONFIG_SERVER_PORT=8080
       - MONGO_HOST=mongodb
-      - MONGO_PORT=27018
+      - MONGO_PORT=27017
+      - MONGO_USERNAME=root
+      - MONGO_PASSWORD=root
       - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=6672
+      - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=admin
       - RABBITMQ_PASSWORD=admin
     ports:
